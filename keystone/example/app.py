@@ -1,3 +1,6 @@
+from flask import g
+from flask import request
+ 
  g.auth_method = request.headers.get("X-Auth-Type", SESSION)
     g.region_name = request.headers.get('X-Region-Name', CONF.OS_REGION_NAME)
     if 'region_name' in request.args:
