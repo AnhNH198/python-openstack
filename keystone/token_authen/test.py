@@ -2,6 +2,7 @@ from keystoneauth1.identity import v3
 from keystoneauth1.session import Session
 from flask import Flask, request, jsonify
 from novaclient import client
+import gettoken
 
 app = Flask(__name__)
 
@@ -25,7 +26,7 @@ def index():
     token = headers.get('X-Auth-Token')
     project_name = headers.get('X-Tenant-Name')
 
-    sess = create_session(token, project_name)
+    sess = gettoken.createSession(token, project_name)
     
     nova = nova_client(sess, 'HaNoi')
     list = nova.servers.list()
