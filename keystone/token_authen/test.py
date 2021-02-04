@@ -1,41 +1,4 @@
-from keystoneauth1.identity import v3
-from keystoneauth1.session import Session
-from flask import Flask, request, jsonify
-from novaclient import client
-import gettoken
-
-app = Flask(__name__)
-
-OS_AUTH_URL = "http://172.19.242.10:5000/v3"
-
-def create_session(token, project_name):
-    auth = v3.Token(
-        auth_url= OS_AUTH_URL,
-        token=token,
-        project_name=project_name,
-        project_domain_name='Default'
-    )
-    return Session(auth=auth)
-
-def nova_client(session, region):
-    return client.Client("2", session=session, region_name=region)
-
-@app.route('/')
-def index():
-    headers = request.headers
-    token = headers.get('X-Auth-Token')
-    project_name = headers.get('X-Tenant-Name')
-
-    sess = gettoken.createSession(token, project_name)
-    
-    nova = nova_client(sess, 'HaNoi')
-    list = nova.servers.list()
-    token = sess.get_token()
-    message = {
-        "token": token,
-        "list": str(list)
-    }
-    return jsonify(message=message), 200
-
-if __name__ == '__main__':
-    app.run(debug=True)
+import requests
+response = requests.get('https://thor-hn-metrics-1.vccloud.vn:3000/api/datasources/proxy/4/query?db=publicthor&q=SELECT mean(%22value%22) FROM %22instances%22 WHERE (%22tags1%22 %3D~ %2F%5E9fbd48d2-01b2-4490-a748-c27dd7083acf%24%2F AND %22tags2%22 %3D %27libvirt-kvm%27 AND %22tags3%22 %3D %27cpu%27 AND %22tags4%22 %3D %27total%27 AND %22tags5%22 %3D %27time%27) AND time %3E%3D now() - 24h GROUP BY time(2m) fill(none)&epoch=ms')
+data = response.json()
+print(f"{data}")
