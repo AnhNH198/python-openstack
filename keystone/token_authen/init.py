@@ -1,4 +1,4 @@
-from keystoneauth1.identity import v3
+from keystoneauth1.identity import V3ApplicationCredential, v3
 from keystoneauth1.session import Session
 from flask import Flask, request, jsonify
 import requests
@@ -38,10 +38,12 @@ def index():
 
 @app.route('/metric')
 def GET():
-    headers = request.headers
-    sid = headers.get('X-Server-ID')
-    response = requests.get(f'https://thor-hn-metrics-1.vccloud.vn:3000/api/datasources/proxy/4/query?db=publicthor&q=SELECT mean(\"value\") FROM \"instances\" WHERE (\"tags1\" =~ /^{sid}$/ AND \"tags2\" = \'libvirt-kvm\' AND \"tags3\" = \'cpu\' AND \"tags4\" = \'total\' AND \"tags5\" = \'time\') AND time >= now() - 24h GROUP BY time(2m) fill(none)&epoch=ms')
+    sid = request.args.get('sid')
+    name = request.args.get('name')
+
+    response = requests.get(f'https://thor-hn-metrics-1.vccloud.vn:3000/api/datasources/proxy/4/query?db=publicthor&q=SELECT mean(\"value\") FROM \"instances\" WHERE (\"tags1\" =~ /^{sid}$/ AND \"tags2\" = \'libvirt-kvm\' AND \"tags3\" = \'{name}\' AND \"tags4\" = \'total\' AND \"tags5\" = \'time\') AND time >= now() - 24h GROUP BY time(2m) fill(none)&epoch=ms')
     data = response.json()
+    
     return jsonify(message=data), 200
 
 if __name__ == '__main__':
