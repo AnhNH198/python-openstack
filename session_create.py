@@ -2,9 +2,9 @@ from keystoneauth1.identity import v3
 from keystoneauth1.session import Session
 from keystoneclient.v3 import client
 
-auth = v3.Password(auth_url='https://hn-1.vccloud.vn:5000/v3', \
-                    username='anhnhjk18010@fpt.edu.vn', \
-                    password='Boploi2134', \
+auth = v3.Password(auth_url='', \
+                    username='@.vn', \
+                    password='', \
                     user_domain_name='Default', \
                     project_domain_name='Default')
 
